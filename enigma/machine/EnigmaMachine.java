@@ -7,6 +7,7 @@ package enigma.machine;
  * input -> plugboard -> rotor[2] (RightToLeft) -> rotor[1] (RightToLeft) -> rotor[0] (RightToLeft) -> reflector 
  * -> rotor[0] (LeftToRight) -> rotor[1] (LeftToRight) -> rotor[2] (LeftToRight) -> plugboard -> output
  * Rotor3 turns before a char is encrypted
+ * More information can be found at EnigmaMachineStepper
  * @author johnrizkalla
  *
  */
@@ -14,6 +15,8 @@ public class EnigmaMachine {
 	private Rotor[] rotor; // 3 rotors
 	private Reflector reflector;
 	private Plugboard plugboard;
+	
+	private EnigmaMachineStepper stepper;
 	
 	private void connectRotors(){
 		if (rotor[0] != null && rotor[1] != null && rotor[2] != null){
@@ -92,6 +95,20 @@ public class EnigmaMachine {
 	}
 
 	/**
+	 * @return the stepper
+	 */
+	public EnigmaMachineStepper getStepper() {
+		return stepper;
+	}
+
+	/**
+	 * @param stepper the stepper to set
+	 */
+	public void setStepper(EnigmaMachineStepper stepper) {
+		this.stepper = stepper;
+	}
+
+	/**
 	 * Encryptes the input. For this to worlk, all parts must. Throws an exception if any of the parts are null
 	 * @param input the input to be encrypted
 	 * @return the encrypted char
@@ -104,23 +121,88 @@ public class EnigmaMachine {
 		
 		// make sure that input is a letter
 		if ((input >= 'A' && input <= 'Z') || (input >= 'a' && input <= 'z')){
-		
-		rotor[2].rotate();
-//		System.err.print("input: " + input);
-		input = plugboard.map(input);
-//		System.err.print(" -> " + input);
-		input = rotor[0].translateRightToLeft(rotor[1].translateRightToLeft(rotor[2].translateRightToLeft(input)));
-//		System.err.print(" -> " + input);
-		input = reflector.map(input);
-//		System.err.print(" -> " + input);
-		input = rotor[2].translateLeftToRight(rotor[1].translateLeftToRight(rotor[0].translateLeftToRight(input)));
-//		System.err.print(" -> " + input);
-		input = plugboard.map(input);
-//		System.err.println (" -> " + input);
-		
-		return input;
-		}
+			
+			if (stepper != null){
+				if (!stepper.start(input))
+					return input;
+			}
+			
+			rotor[2].rotate();
+			
+			if (stepper != null){
+				if (!stepper.afterRotate(input))
+					return input;
+			}
+			
+			char prevInput = input;
 
+			input = plugboard.map(input);
+			if (stepper != null){
+				if (!stepper.afterPlugboard1(prevInput, input))
+					return input;
+			}
+
+			
+			prevInput = input;
+			char []rotorOut = rotor[2].translateRightToLeftSteps(input);
+			input = rotorOut[rotorOut.length - 1];
+			if (stepper != null){
+				if (!stepper.afterRightToLeftRotor3(prevInput, rotorOut))
+					return input;
+			}
+			prevInput = input;
+			rotorOut = rotor[1].translateRightToLeftSteps(input);
+			input = rotorOut[rotorOut.length - 1];
+			if (stepper != null){
+				if (!stepper.afterRightToLeftRotor2(prevInput, rotorOut))
+					return input;
+			}
+			prevInput = input;
+			rotorOut = rotor[0].translateRightToLeftSteps(input);
+			input = rotorOut[rotorOut.length - 1];
+			if (stepper != null){
+				if (!stepper.afterRightToLeftRotor1(prevInput, rotorOut))
+					return input;
+			}
+			
+			prevInput = input;
+			input = reflector.map(input);
+			if (stepper != null){
+				if (!stepper.afterReflector(prevInput, input))
+					return input;
+			}
+			
+			prevInput = input;
+			rotorOut = rotor[0].translateLeftToRightSteps(input);
+			input = rotorOut[rotorOut.length - 1];
+			if (stepper != null){
+				if (!stepper.afterLeftToRightRotor1(prevInput, rotorOut))
+					return input;
+			}
+			prevInput = input;
+			rotorOut = rotor[1].translateLeftToRightSteps(input);
+			input = rotorOut[rotorOut.length - 1];
+			if (stepper != null){
+				if (!stepper.afterLeftToRightRotor2(prevInput, rotorOut))
+					return input;
+			}
+			prevInput = input;
+			rotorOut = rotor[2].translateLeftToRightSteps(input);
+			input = rotorOut[rotorOut.length - 1];
+			if (stepper != null){
+				if (!stepper.afterLeftToRightRotor3(prevInput, rotorOut))
+					return input;
+			}
+			
+			prevInput = input;
+			input = plugboard.map(input);
+			if (stepper != null){
+				if (!stepper.afterPlugboard2(prevInput, input))
+					return input;
+				stepper.end(input);
+			}
+		}
+	
 		return input;
 	}
 	

@@ -231,7 +231,7 @@ public class Rotor {
         if (currPos > 26)
             currPos = 1;
     }
-
+    
     /**
      * Translates a character to another (based on the wiring of the rotor)
      * This simulates a signal coming from the left side of the rotor and exiting from the right side
@@ -239,41 +239,12 @@ public class Rotor {
      * @return the translated to a character
      */
     public char translateRightToLeft(char input){
-        // Translation:
-        // A -> A + shift --wiring--> B -> B + shift
-
-        // shift input to the position of the rotor
-        int intChar = (int)input;
-        
-    	boolean wasUpperCase = false;
-        if (intChar >= 'A' && intChar <= 'Z'){
-        	wasUpperCase = true;
-        } else if (intChar < 'a' || intChar > 'z'){
-        	// not a letter
-        	return input;
-        }
-        intChar = (int)Character.toUpperCase(input);
-        
-        intChar += currPos - 1; //  (currPos - 1) has range 0 to 25 (inclusive)
-        if (intChar > 'Z') {
-            intChar -= 'Z' - 'A' + 1;
-        }
-        
-        intChar = (int)leftSide.charAt(rightSide.indexOf(intChar));
-        
-//        // now shift it out of the rotor
-        intChar -= currPos - 1;
-        if (intChar < 'A'){
-            intChar += 'Z' - 'A' + 1;
-        }
-
-        if (wasUpperCase){
-        	return (char)intChar;
-        } else {
-        	return Character.toLowerCase((char)intChar);
-        }
+    	char[] result = this.translateRightToLeftSteps(input);
+    	if (result == null)
+    		return input;
+    	else
+    		return result[result.length-1];
     }
-    
     
     /**
      * Translates a character to another (based on the wiring of the rotor)
@@ -282,9 +253,79 @@ public class Rotor {
      * @return the translated to a character
      */
     public char translateLeftToRight(char input){
+    	char[] result = this.translateRightToLeftSteps(input);
+    	if (result == null)
+    		return input;
+    	else
+    		return result[result.length-1];
+    }
+    
+    
+
+    /**
+     * Translates a character to another (based on the wiring of the rotor)
+     * This simulates a signal coming from the left side of the rotor and exiting from the right side
+     * @param input the character to translate
+     * @return all the steps of translation. The result can be found at char[lengh - 1] == char[4]
+     * Format of result: input after filtration -> input after shift -> input after map -> input after shift -> output
+     */
+    public char[] translateRightToLeftSteps(char input){
+        // Translation:
+        // A -> A + shift --wiring--> B -> B + shift
+
+        // shift input to the position of the rotor
+    	char[] result = new char[5];
+        int intChar = (int)input;
+        
+    	boolean wasUpperCase = false;
+        if (intChar >= 'A' && intChar <= 'Z'){
+        	wasUpperCase = true;
+        } else if (intChar < 'a' || intChar > 'z'){
+        	// not a letter
+        	return null;
+        }
+        intChar = (int)Character.toUpperCase(input);
+        
+        result[0] = (char)intChar;
+        intChar += currPos - 1; //  (currPos - 1) has range 0 to 25 (inclusive)
+        if (intChar > 'Z') {
+            intChar -= 'Z' - 'A' + 1;
+        }
+        result[1] = (char)intChar;
+        
+        intChar = (int)leftSide.charAt(rightSide.indexOf(intChar));
+        
+        result[2] = (char)intChar;
+        
+//        // now shift it out of the rotor
+        intChar -= currPos - 1;
+        if (intChar < 'A'){
+            intChar += 'Z' - 'A' + 1;
+        }
+        
+        result[3] = (char)intChar;
+
+        if (wasUpperCase){
+        	result[4] = (char)intChar;
+        } else {
+        	result[4] = Character.toLowerCase((char)intChar);
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Translates a character to another (based on the wiring of the rotor)
+     * This simulates a signal coming from the right side of the rotor and exiting from the left side
+     * @param input the character to translate
+     * @return all the steps of translation. The result can be found at char[lengh - 1] == char[4]
+     * Format of result: input after filtration -> input after shift -> input after map -> input after shift -> output
+     */
+    public char[] translateLeftToRightSteps(char input){
     	// Translation:
         // A -> A + shift --wiring--> B -> B + shift
 
+    	char[] results = new char[5];
         // shift input to the position of the rotor
         int intChar = (int)input;
         
@@ -293,28 +334,37 @@ public class Rotor {
         	wasUpperCase = true;
         } else if (intChar < 'a' || intChar > 'z'){
         	// not a letter
-        	return input;
+        	return null;
         }
+        
         intChar = (int)Character.toUpperCase(input);
+        results[0] = (char)intChar;
         
         intChar += currPos - 1; //  (currPos - 1) has range 0 to 25 (inclusive)
         if (intChar > 'Z') {
             intChar -= 'Z' - 'A' + 1;
         }
         
+        results[1] = (char)intChar;
+        
         intChar = (int)rightSide.charAt(leftSide.indexOf(intChar));
 
+        results[2] = (char)intChar;
+        
         // no shift it out of the rotor
         intChar -= currPos - 1;
         if (intChar < 'A'){
             intChar += 'Z' - 'A' + 1;
         }
         
+        results[3] = (char)intChar;
+        
         if (wasUpperCase){
-        	return (char)intChar;
+        	results[4] = (char)intChar;
         } else {
-        	return Character.toLowerCase((char)intChar);
+        	results[4] = Character.toLowerCase((char)intChar);
         }
+        return results;
     }
 
     @Override
