@@ -1,9 +1,11 @@
 package enigma.machine;
 
 /**
- * A Rotor represents a physical rotor
+ * A Rotor represents a physical rotor in an Enigma Machine
+ * <p>
  * It starts out with an initial position and moves using the methods provided
- * A rotor's physical structure can be changed using the constructor but they cannot be changed for a created object
+ * <p>
+ * A rotor's physical structure can bet set using the constructor but they cannot be changed later (except the position)
  */
 public class Rotor {
 	public String name; // for debugging
@@ -27,15 +29,15 @@ public class Rotor {
 
     /**
      * Creates a Rotor with the specified settings
-     * @param from from and to specify the wiring. from[i] -> to[i]
-     * @param to both from and to must have length == 26 and both of them must contain all the alphabet in UPPERCASE
-     * @param connection a connection to another rotor. When this rotor completes a full turn it turns connection. Can be null
-     * @param fullTurn Where is the full turn. If fullTurn is null, it sets it to the default value of rotor "I"
-     * @return a new Rotor or null if there is an error
+     * @param from from and to specify the wiring. {@code from[i] -> to[i]}
+     * @param to both from and to must have {@code length == 26} and both of them must contain all the alphabet in UPPERCASE
+     * @param connection a connection to another rotor. When this rotor completes a full turn it turns the connection. Can be {@code null}
+     * @param fullTurn Where is the full turn. If fullTurn is {@code null}, it sets it to the default value of rotor "I"
+     * @return a new Rotor or {@code null} if there is an error
      */
     public static Rotor createRotor(String from, String to, Rotor connection, int[] fullTurn){
         if (from.length() != 26 || to.length() != 26) {
-        	throw new IllegalArgumentException();
+        	return null;
         }
 
         Rotor newRotor = new Rotor("empty");
@@ -60,17 +62,19 @@ public class Rotor {
 
     /**
      * Creates a Rotor with the specified settings
-     * @param rotorName the name of a default rotor, acceptable names are (source: http://en.wikipedia.org/wiki/Enigma_rotor_details)
-     *                  I
-     *                  II
-     *                  III
-     *                  IV
-     *                  V
-     *                  VI
-     *                  VII
-     *                  VIII
-     * @param connection a connection to another rotor. When this rotor completes a full turn it turns connection. Can be null
-     * @return a new Rotor or null if there is an error
+     * @param rotorName the name of a default rotor, acceptable names are (source: {@link http://en.wikipedia.org/wiki/Enigma_rotor_details})
+     * <ul>
+     * <li> I
+     * <li> II
+     * <li> III
+     * <li> IV
+     * <li> V
+     * <li> VI
+     * <li> VII
+     * <li> VIII
+     * </ul>
+     * @param connection a connection to another rotor. When this rotor completes a full turn it turns connection. Can be {@code null}
+     * @return a new Rotor or {@code null} if there is an error
      */
     public static Rotor createRotor(String rotorName, Rotor connection){
         String from = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -115,7 +119,7 @@ public class Rotor {
             fullTurn[1] = 'M' - 'A' + 1;
         }
         else
-        	throw new IllegalArgumentException();
+        	return null;
 
         if (fullTurn[1] == -1){ // trim fullTurn
             int temp = fullTurn[0];
@@ -266,8 +270,9 @@ public class Rotor {
      * Translates a character to another (based on the wiring of the rotor)
      * This simulates a signal coming from the left side of the rotor and exiting from the right side
      * @param input the character to translate
-     * @return all the steps of translation. The result can be found at char[lengh - 1] == char[4]
-     * Format of result: input after filtration -> input after shift -> input after map -> input after shift -> output
+     * @return all the steps of translation. The result can be found at {@code char[lengh - 1] == char[4]}
+     * <p>
+     * Format of result: input after filtration, input after shift, input after map, input after shift, output
      */
     public char[] translateRightToLeftSteps(char input){
         // Translation:
@@ -318,8 +323,9 @@ public class Rotor {
      * Translates a character to another (based on the wiring of the rotor)
      * This simulates a signal coming from the right side of the rotor and exiting from the left side
      * @param input the character to translate
-     * @return all the steps of translation. The result can be found at char[lengh - 1] == char[4]
-     * Format of result: input after filtration -> input after shift -> input after map -> input after shift -> output
+     * @return  all the steps of translation. The result can be found at {@code char[lengh - 1] == char[4]}
+     * <p>
+     * Format of result: input after filtration, input after shift, input after map, input after shift, output
      */
     public char[] translateLeftToRightSteps(char input){
     	// Translation:

@@ -8,34 +8,34 @@ package enigma.machine;
  * EnigmaMachine encryption
  * The Enigma machine code looks like this:
  * <ul>
- * 		<li>> call start
- * 		<li>> rotate rotor3
- * 		<li>> call afterRotate
+ * 		<li> call start
+ * 		<li> rotate rotor3
+ * 		<li> call afterRotate
  * 
- * 		<li>> input := input through plugboard
- * 		<li>> call afterPlugboard1
+ * 		<li> input = input through plugboard
+ * 		<li> call afterPlugboard1
  * 
- * 		<li>> input := input through rotor3 (right to left)
- * 		<li>> call afterRightToLeftRotor3
- * 		<li>> input := input through rotor2 (right to left)
- * 		<li>> call afterRightToLeftRotor2
- * 		<li>> input := input through rotor1 (right to left)
- * 		<li>> call afterRightToLeftRotor1
+ * 		<li> input = input through rotor3 (right to left)
+ * 		<li> call afterRightToLeftRotor3
+ * 		<li> input = input through rotor2 (right to left)
+ * 		<li> call afterRightToLeftRotor2
+ * 		<li> input = input through rotor1 (right to left)
+ * 		<li> call afterRightToLeftRotor1
  * 
- * 		<li>> input := input through reflector
- * 		<li>> call afterReflector
+ * 		<li> input := input through reflector
+ * 		<li> call afterReflector
  * 
- * 		<li>> input := input through rotor1 (left to right)
- * 		<li>> call afterLeftToRightRotor1
- * 		<li>> input := input through rotor2 (left to right)
- * 		<li>> call afterLeftToRightRotor2
- * 		<li>> input := input through rotor3 (left to right)
- * 		<li>> call afterLeftToRightRotor3
+ * 		<li> input = input through rotor1 (left to right)
+ * 		<li> call afterLeftToRightRotor1
+ * 		<li> input = input through rotor2 (left to right)
+ * 		<li> call afterLeftToRightRotor2
+ * 		<li> input = input through rotor3 (left to right)
+ * 		<li> call afterLeftToRightRotor3
+ *
+ * 		<li> input = input through plugboard
+ * 		<li> call afterPlugboard2
  * 
- * 		<li>> input := input through plugboard
- * 		<li>> call afterPlugboard2
- * 
- * 		<li>> call end
+ * 		<li> call end
  * 
  * </ul>
  * 

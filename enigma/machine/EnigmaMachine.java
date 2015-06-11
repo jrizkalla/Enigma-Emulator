@@ -2,13 +2,26 @@ package enigma.machine;
 
 /**
  * Simulates an Enigma machine with the following structure:
- * || reflector | rotor1 | rotor2 | rotor3 ||
+ * {@code || reflector | rotor1 | rotor2 | rotor3 ||} 
+ * <p>
  * As with a standard Enigma machine, input goes through:
- * input -> plugboard -> rotor[2] (RightToLeft) -> rotor[1] (RightToLeft) -> rotor[0] (RightToLeft) -> reflector 
- * -> rotor[0] (LeftToRight) -> rotor[1] (LeftToRight) -> rotor[2] (LeftToRight) -> plugboard -> output
+ * <ol>
+ * 		<li> plugboard
+ * 		<li> rotor[2] (RightToLeft)
+ * 		<li> rotor[1] (RightToLeft)
+ * 		<li> rotor[0] (RightToLeft)
+ * 		<li> reflector
+ * 		<li> rotor[1] (LeftToRight)
+ * 		<li> rotor[2] (LeftToRight)
+ * 		<li> rotor[3] (LeftToRight)
+ * 		<li> plugboard
+ * </ol>
+ * <p>
  * Rotor3 turns before a char is encrypted
+ * <p>
  * More information can be found at EnigmaMachineStepper
- * @author johnrizkalla
+ * @see EnigmaMachineStepper
+ * @author John Rizkalla
  *
  */
 public class EnigmaMachine {
@@ -27,7 +40,7 @@ public class EnigmaMachine {
 	
 	/**
 	 * Creates a new enigma machine with the parts passed in
-	 * @param rotors rotor[i] has 3 rotors. rotor[0] is the one at the left and rotor[2] is the one at the right. They don't have to be connected
+	 * @param rotors {@code rotor[i]} has 3 rotors. {@code rotor[0]} is the one at the left and {@code rotor[2]} is the one at the right. They don't have to be connected
 	 * @param reflector the reflector
 	 * @param plugboard the plugboard
 	 */
@@ -109,9 +122,10 @@ public class EnigmaMachine {
 	}
 
 	/**
-	 * Encryptes the input. For this to worlk, all parts must. Throws an exception if any of the parts are null
+	 * Encryptes the input. For this to work, all parts must exist (not {@code null}).
 	 * @param input the input to be encrypted
 	 * @return the encrypted char
+	 * @throws IllegalStateException if any of the parts are {@code null}
 	 */
 	public char encrypt(char input){
 		if (rotor[0] == null || rotor[1] == null || rotor[2] == null)
@@ -206,6 +220,13 @@ public class EnigmaMachine {
 		return input;
 	}
 	
+	/**
+	 * Encrypts a whole string, this method uses encrypt(char)
+	 * @param input the input to encrypt
+	 * @return the encrypted string
+	 * @throws IllegalStateException if any of the parts of the Machine is {@code null}
+	 * @see EnigmaMachine#encrypt(char)
+	 */
 	public String encrypt(String input){
 		char [] result = new char[input.length()];
 		char [] inputArr = input.toCharArray();

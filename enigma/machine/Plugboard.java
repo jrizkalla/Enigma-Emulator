@@ -2,8 +2,9 @@ package enigma.machine;
 
 /**
  * A Plugboard is the scrambler that converts from 1 letter to another
+ * <p>
  * It is basically a mapping from Chars to Chars that goes both ways
- * A Plugboard is also dynamic, pairings can be changed any time
+ * Plugboards are mutable, pairings can be changed any time
  * @author John Rizkalla
  */
 public class Plugboard {
@@ -39,6 +40,11 @@ public class Plugboard {
 			return input;
 	}
 	
+	/**
+	 * Pairs {@code a} with {@code b}. It overrides any previous parings that involve {@code a} or {@code b}
+	 * @param a the first letter
+	 * @param b the second letter
+	 */
 	public void changeSettings(char a, char b){
 		a = Character.toUpperCase(a);
 		b = Character.toUpperCase(b);
