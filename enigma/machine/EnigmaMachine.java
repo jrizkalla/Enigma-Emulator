@@ -216,4 +216,20 @@ public class EnigmaMachine {
 		
 		return new String(result);
 	}
+	
+	@Override
+	public String toString(){
+		if (rotor[0] == null || rotor[1] == null || rotor[2] == null)
+			return "Empty";
+		if (plugboard == null || reflector == null)
+			return "Empty";
+		
+		String str = "";
+		str += "1: " + (rotor[0].getCurrentPos() + 'A' - 1) + "\n";
+		str += "2: " + (rotor[1].getCurrentPos() + 'A' - 1) + "\n";
+		str += "3: " + (rotor[2].getCurrentPos() + 'A' - 1) + "\n";
+		str += "Reflector: " + reflector.toString();
+		str += "Plugboard: " + plugboard.toString();
+		return str;
+	}
 }

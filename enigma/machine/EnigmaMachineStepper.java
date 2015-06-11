@@ -7,34 +7,37 @@ package enigma.machine;
  * An interface that provides the ability to track changes in the individual steps of the
  * EnigmaMachine encryption
  * The Enigma machine code looks like this:
- * 		> call start
- * 		> rotate rotor3
- * 		> call afterRotate
+ * <ul>
+ * 		<li>> call start
+ * 		<li>> rotate rotor3
+ * 		<li>> call afterRotate
  * 
- * 		> input := input through plugboard
- * 		> call afterPlugboard1
+ * 		<li>> input := input through plugboard
+ * 		<li>> call afterPlugboard1
  * 
- * 		> input := input through rotor3 (right to left)
- * 		> call afterRightToLeftRotor3
- * 		> input := input through rotor2 (right to left)
- * 		> call afterRightToLeftRotor2
- * 		> input := input through rotor1 (right to left)
- * 		> call afterRightToLeftRotor1
+ * 		<li>> input := input through rotor3 (right to left)
+ * 		<li>> call afterRightToLeftRotor3
+ * 		<li>> input := input through rotor2 (right to left)
+ * 		<li>> call afterRightToLeftRotor2
+ * 		<li>> input := input through rotor1 (right to left)
+ * 		<li>> call afterRightToLeftRotor1
  * 
- * 		> input := input through reflector
- * 		> call afterReflector
+ * 		<li>> input := input through reflector
+ * 		<li>> call afterReflector
  * 
- * 		> input := input through rotor1 (left to right)
- * 		> call afterLeftToRightRotor1
- * 		> input := input through rotor2 (left to right)
- * 		> call afterLeftToRightRotor2
- * 		> input := input through rotor3 (left to right)
- * 		> call afterLeftToRightRotor3
+ * 		<li>> input := input through rotor1 (left to right)
+ * 		<li>> call afterLeftToRightRotor1
+ * 		<li>> input := input through rotor2 (left to right)
+ * 		<li>> call afterLeftToRightRotor2
+ * 		<li>> input := input through rotor3 (left to right)
+ * 		<li>> call afterLeftToRightRotor3
  * 
- * 		> input := input through plugboard
- * 		> call afterPlugboard2
+ * 		<li>> input := input through plugboard
+ * 		<li>> call afterPlugboard2
  * 
- * 		> call end
+ * 		<li>> call end
+ * 
+ * </ul>
  * 
  * If any of these methods return false, the encryption process stops and returns the partial result
  * @author John Rizkalla

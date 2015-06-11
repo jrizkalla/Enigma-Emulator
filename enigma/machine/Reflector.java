@@ -34,11 +34,11 @@ public class Reflector {
 	 * @return the new reflector or null if there is an error
 	 */
 	public static Reflector createReflectorType(String name){
-		if (name == "Reflector A")
+		if (name.equals("Reflector A"))
 			return createReflector("EJMZALYXVBWFCRQUONTSPIKHGD");
-		else if (name == "Reflector B")
+		else if (name.equals("Reflector B"))
 			return createReflector("YRUHQSLDPXNGOKMIEBFZCWVJAT");
-		else if (name == "Reflector C")
+		else if (name.equals("Reflector C"))
 			return createReflector("FVPJIAOYEDRZXWGCTKUQSBNMHL");
 		else
 			throw new IllegalArgumentException();
