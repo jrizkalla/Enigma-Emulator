@@ -7,6 +7,7 @@ package enigma.machine;
  *
  */
 public class Reflector {
+	private String name;
 	private char[] map;
 	
 	/**
@@ -36,14 +37,18 @@ public class Reflector {
 	 * @return the new reflector or {@code null} if there is an error
 	 */
 	public static Reflector createReflectorType(String name){
+		Reflector r;
 		if (name.equals("Reflector A"))
-			return createReflector("EJMZALYXVBWFCRQUONTSPIKHGD");
+			r = createReflector("EJMZALYXVBWFCRQUONTSPIKHGD");
 		else if (name.equals("Reflector B"))
-			return createReflector("YRUHQSLDPXNGOKMIEBFZCWVJAT");
+			r = createReflector("YRUHQSLDPXNGOKMIEBFZCWVJAT");
 		else if (name.equals("Reflector C"))
-			return createReflector("FVPJIAOYEDRZXWGCTKUQSBNMHL");
+			r = createReflector("FVPJIAOYEDRZXWGCTKUQSBNMHL");
 		else
 			throw new IllegalArgumentException();
+		
+		r.setName(name);
+		return r;
 	}
 	
 	/**
@@ -72,5 +77,27 @@ public class Reflector {
 			return Character.toLowerCase(input);
 		else
 			return input;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Reflector " + name;
 	}
 }

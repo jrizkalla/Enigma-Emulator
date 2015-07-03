@@ -67,4 +67,28 @@ public class Plugboard {
 		map[indexOfA] = b;
 		map[indexOfB] = a;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		// print letters up to (and including) N on the first line if they are paired
+		String line1 = "";
+		String line2 = "";
+		
+		for (char i = 'A'; i <= 'N'; i++){
+			char lookup = map[i - 'A'];
+			if (lookup != i){
+				line1 += i;
+				line2 += lookup;
+			}
+		}
+		
+		if (line1.length() > 0){
+			return line1 + "\n" + line2;
+		} else {
+			return "";
+		}
+	}
 }

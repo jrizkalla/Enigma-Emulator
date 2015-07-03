@@ -8,7 +8,7 @@ package enigma.machine;
  * A rotor's physical structure can bet set using the constructor but they cannot be changed later (except the position)
  */
 public class Rotor {
-	public String name; // for debugging
+	String name;
     // settings of the Rotor
 	String leftSide;
 	String rightSide;
@@ -127,7 +127,9 @@ public class Rotor {
             fullTurn[0] = temp;
         }
 
-        return Rotor.createRotor(from, to, connection, fullTurn);
+        Rotor r =  Rotor.createRotor(from, to, connection, fullTurn);
+        r.setName(rotorName);
+        return r;
     }
 
 
@@ -173,6 +175,8 @@ public class Rotor {
 
         this.connection = connection;
         this.currPos = 1;
+        
+        this.name = "unnamed";
     }
 
 
@@ -373,8 +377,22 @@ public class Rotor {
         return results;
     }
 
-    @Override
+    /**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
     public String toString(){
-        return "Rotor at position " + currPos;
+        return "Rotor " + name + " at position " + currPos;
     }
 }
