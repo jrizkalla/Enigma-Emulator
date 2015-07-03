@@ -2,8 +2,8 @@ package enigma.commandline.ui;
 
 import enigma.commandline.settings.*;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.BufferedReader;
@@ -31,6 +31,7 @@ public class UI {
 	 *  	<li> <tt>\exit</tt> causes the program to exit. Does not discard the whole line
 	 *  	<li> <tt>\help</tt> prints a help message and discards line. @see enigma.commandline.ui.UIPrinter#printHelp
 	 *  	<li> <tt>\info</tt> prints info message. @see enigma.commandline.ui.UIPrinter#printInfo
+	 *  	<li> <tt>\names</tt> just prints the names of rotors and reflectors
 	 *  </ul>
 	 * @param line
 	 * @throws SettingsParserException 
@@ -43,9 +44,10 @@ public class UI {
 		ArrayList<Object> result = new ArrayList<Object>();
 		boolean exit = false;
 
-		for (int i = 0; i < line.length(); i++){
-			char curr = line.charAt(i);
-			if (state == 0 && curr == '\\'){
+		for (int i = 0; i < line.length() + 1; i++){
+			char curr = 0;
+			if (i < line.length()) curr = line.charAt(i);
+			if (state == 0 && (curr == '\\' || curr == 0)){
 				state = 1;
 				if (!text.isEmpty()){
 					result.add(text);
@@ -71,6 +73,9 @@ public class UI {
 					exit = true;
 				} else if (command.equals("help")){
 					printer.printHelp(); // discard input
+					return 0;
+				} else if (command.equals("names")){
+					printer.printNames();
 					return 0;
 				} else if (command.charAt(0) == '<'){
 					Settings.apply(printer.getMachine(), SettingsParser.parse(command)); // may throw an exception
@@ -132,6 +137,7 @@ public class UI {
 				}
 			}
 		}
+		
 		// print the result and exit
 		printer.encryptText(result.toArray());
 		if (exit) return 2;
@@ -141,27 +147,31 @@ public class UI {
 	/**
 	 * Starts the user interface. Exits when the user is done (<tt>\exit</tt> command)
 	 * IsSilenMode in UIPrinter applies to everything in this method except the error message
-	 * @param inputStream the input stream to read from
+	 * @param inputStream the input stream to read from. Of null to read from stdin. HAS TO BE NULL to read from stdin or bad things will happen
 	 */
 	public static void startReading(Reader inputStream) throws IOException{
 		if (!printer.isSilentModeOn()) System.out.println("Welcome to Enigma Emulator V.1.1");
 		if (!printer.isSilentModeOn()) System.out.println("Type \\help for help and \\exit to exit followed by a end of file (EOF) (Ctrl-D on a Unix system)");
-		if (!printer.isSilentModeOn()) System.out.println("Type \\info EOF if you don't know what an Enigma Machine is\n");
+		if (!printer.isSilentModeOn()) System.out.println("Type \\info EOF if you don't know what an Enigma Machine is");
 
 		int exitStatus = 0;
-		BufferedReader reader = new BufferedReader(inputStream);
+		Scanner reader = null;
+		if (inputStream != null)
+			reader = new Scanner(inputStream);
 		while (exitStatus != 2){
+			if (inputStream == null) reader = new Scanner(System.in);
 			// read until EOF
 			String input = "";
-			String line = reader.readLine();
-			while (line != null){
+			while (reader.hasNextLine()){
+				String line = reader.nextLine();
 				input += line;
-				line = reader.readLine();
 			}
+			if (input == "")
+				break;
 			
 			try{
 				if (exitStatus == 0){
-					UI.parseLineInNormalMode(input);
+					exitStatus = UI.parseLineInNormalMode(input);
 				} else { // settings mode
 					Settings.apply(printer.getMachine(), SettingsParser.parse(input));
 				}
