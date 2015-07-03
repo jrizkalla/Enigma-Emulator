@@ -50,7 +50,7 @@ public class EnigmaMachine {
 				throw new IllegalArgumentException();
 			rotor = rotors;
 		} else{
-			rotors = new Rotor[3]; // set to null
+			rotor = new Rotor[3]; // set to null
 		}
 		
 		this.reflector = reflector;
