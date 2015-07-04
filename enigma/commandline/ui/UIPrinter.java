@@ -1,6 +1,9 @@
 package enigma.commandline.ui;
 
 import enigma.machine.EnigmaMachine;
+import enigma.machine.Plugboard;
+import enigma.machine.Reflector;
+import enigma.machine.Rotor;
 
 /**
  * Takes a string, encrypts it, and print it to the screnn
@@ -36,7 +39,9 @@ public class UIPrinter {
 		super();
 		animationOn = false;
 		silentModeOn = false;
-		machine = new EnigmaMachine();
+		// machine with default parts
+		Rotor[] rotors = {Rotor.createRotor("I", null), Rotor.createRotor("II", null), Rotor.createRotor("III", null)};
+		machine = new EnigmaMachine(rotors, Reflector.createReflectorType("Reflector A"), new Plugboard());
 	}
 	
 	/**
@@ -55,7 +60,7 @@ public class UIPrinter {
 						System.out.print(machine.encrypt(c));
 						System.out.flush();
 						try {
-							Thread.sleep(1000);
+							Thread.sleep(500);
 						} catch (InterruptedException e) {} // move on. No one cares if animationMode does not work properly (for now)
 					}
 					System.out.println();
@@ -70,19 +75,19 @@ public class UIPrinter {
 				String line1 = "";
 				boolean line1Empty = true;
 				String line2 = "";
-				line1 += "\t| ";
 				if (s.reflector){
-					line1 += s.reflector;
+					line1 += "| ";
+					line1 += machine.getReflector();
 					line1Empty = false;
+					line1 += " |  ";
 				}
-				line1 += " |\t";
 				for (int i = 0; i < 3; i++){
-					line1 += "\t| ";
+					line1 += "  | ";
 					if (s.rotor[i]){
-						line1 += "\t| " + machine.getRotor(i) + " |\t";
+						line1 +=  machine.getRotor(i);
 						line1Empty = false;
 					}
-					line1 += " |\t";
+					line1 += " |  ";
 				}
 				
 				if (s.plugboard){
@@ -102,6 +107,7 @@ public class UIPrinter {
 	 * Prints a help message
 	 */
 	public void printHelp(){
+		System.out.println();
 		String message = "Most commands follow a LaTeX style syntax so they're easy to remember\n";
 		message += "Possible commands are:\n";
 		message += "\tAnimation and output\n";
@@ -138,6 +144,7 @@ public class UIPrinter {
 	}
 	
 	public void printInfo(){
+		System.out.println();
 		String message = "Welcome to Enigma Emulator V.1.1\n";
 		message += "\tDeveloped by John Rizkalla\n";
 		message += "\thttps://github.com/jrizkalla\n";
@@ -151,7 +158,7 @@ public class UIPrinter {
 		
 		message += "The Model used has a reflector, three rotors, and a pluboard\n";
 		message += "\tRotors can be one of:\n";
-		message += "\t\tI\n\t\tII\n\t\tIII\n\t\tIV\n\t\tV\n\t\tVI\t\tVII\n\t\tVIII\n";
+		message += "\t\tI\n\t\tII\n\t\tIII\n\t\tIV\n\t\tV\n\t\tVI\n\t\tVII\n\t\tVIII\n";
 		message += "\tThe reflector can be one of:\n";
 		message += "\t\tReflector A\n\t\tReflector B\n\t\tReflector C\n";
 		
@@ -160,6 +167,7 @@ public class UIPrinter {
 	}
 
 	public void printNames(){
+		System.out.println();
 		String message = "Rotors\t\tReflectors\n";
 		message += "I     \t\tReflector A\n";
 		message += "II    \t\tReflector B\n";

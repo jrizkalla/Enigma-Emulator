@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.BufferedReader;
 
 /**
  * The text UI for Enigma Emulator
@@ -15,6 +14,7 @@ import java.io.BufferedReader;
  */
 public class UI {
 	static private UIPrinter printer = new UIPrinter();
+	static private boolean EOFMode = false;
 	/**
 	 * Parses a line of input based on the following rules:
 	 * <ul>
@@ -41,6 +41,7 @@ public class UI {
 		int state = 0; // 0 for text and 1 for command
 		String command = "";
 		String text = "";
+		String settings = "";
 		ArrayList<Object> result = new ArrayList<Object>();
 		boolean exit = false;
 
@@ -48,12 +49,13 @@ public class UI {
 			char curr = 0;
 			if (i < line.length()) curr = line.charAt(i);
 			if (state == 0 && (curr == '\\' || curr == 0)){
-				state = 1;
 				if (!text.isEmpty()){
 					result.add(text);
 					text = "";
 				}
-			} else if (state == 1 && !((curr >= 'a' && curr <= 'z') || (curr >= 'A' && curr <= 'Z'))){ // commands are terminated by non letters
+				if (curr == '\\')
+					state = 1;
+			} else if (state == 1 && !((curr >= 'a' && curr <= 'z') || (curr >= 'A' && curr <= 'Z') || (curr >= '0' && curr <= '9'))){
 				// proccess command
 				if (command.equals("")){
 					throw new SettingsParserException("illegal command", "\\" + command);
@@ -67,13 +69,24 @@ public class UI {
 				} else if (command.equals("outputOff")){
 					printer.setSilentModeOn(false);
 				} else if (command.equals("settings")){
-					// discard input
-					return 1;
+					// look at the next
+					if (curr == '<'){
+						// go to state 2
+						state = 2;
+						settings += curr;
+						command = "";
+						continue;
+					} else {
+						// discard input and switch to settings mode
+						return 1;
+					}
 				} else if (command.equals("exit")){
 					exit = true;
 				} else if (command.equals("help")){
 					printer.printHelp(); // discard input
 					return 0;
+				} else if (command.equals("info")){
+					printer.printInfo();
 				} else if (command.equals("names")){
 					printer.printNames();
 					return 0;
@@ -124,9 +137,22 @@ public class UI {
 							result.add(status);
 						}
 						status.rotor[0] = status.rotor[1] = status.rotor[2] = status.plugboard = status.reflector = true;
-					} else {
-						throw new SettingsParserException("Unknown command", "\\" + command);
 					}
+				} else {
+					throw new SettingsParserException("Unknown command", "\\" + command);
+				}
+				command = "";
+				state = 0;
+			}
+			else if (state == 2){
+				// accept anything other than >
+				if (curr == '>'){
+					// try to apply settings
+					Settings.apply(printer.getMachine(), SettingsParser.parse(settings + curr));
+					settings = "";
+					state = 0;
+				}else{
+					settings += curr;
 				}
 			}
 			else {
@@ -161,19 +187,37 @@ public class UI {
 		while (exitStatus != 2){
 			if (inputStream == null) reader = new Scanner(System.in);
 			// read until EOF
-			String input = "";
-			while (reader.hasNextLine()){
-				String line = reader.nextLine();
-				input += line;
+			if (!printer.isSilentModeOn()){
+				if (exitStatus == 0)
+					System.out.print("input> ");
+				else
+					System.out.print("settings> ");
 			}
-			if (input == "")
-				break;
+			String input = "";
+			if (EOFMode){
+				while (reader.hasNextLine()){
+					String line = reader.nextLine();
+					input += line;
+				}
+				if (input == "")
+					break;
+			} else {
+				if (reader.hasNextLine())
+					input = reader.nextLine(); 
+				else
+					break;
+			}
 			
 			try{
 				if (exitStatus == 0){
 					exitStatus = UI.parseLineInNormalMode(input);
+					if (exitStatus == 1){
+						if (!printer.isSilentModeOn()) System.out.println("Settings mode (until next EOF)");
+					}
 				} else { // settings mode
 					Settings.apply(printer.getMachine(), SettingsParser.parse(input));
+					System.out.println("Normal mode\n");
+					exitStatus = 0;
 				}
 			} catch (SettingsParserException e) {
 				System.err.println("Oops, looks like you misspelled something in \"" + e.getLexeme() + "\"");
@@ -184,6 +228,6 @@ public class UI {
 			}
 
 		}
-		if (!printer.isSilentModeOn()) System.out.println("Bye :D (or maybe Hail Hitler?)");
+		if (!printer.isSilentModeOn()) System.out.println("Bye :D");
 	}
 }
