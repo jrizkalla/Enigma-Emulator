@@ -217,8 +217,13 @@ public class EnigmaMachine {
 					return input;
 				stepper.end(input);
 			}
+			return input;
 		}
 	
+		if (stepper != null){
+			stepper.start(input);
+			stepper.end(input);
+		}
 		return input;
 	}
 	

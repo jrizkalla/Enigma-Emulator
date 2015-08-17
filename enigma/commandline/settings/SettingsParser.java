@@ -67,6 +67,9 @@ public class SettingsParser {
 	
 	public static Settings[] parse(String input) throws SettingsParserException{
 		ArrayList<Settings> result = new ArrayList<Settings> ();
+		
+		if (input.trim() == "")
+			return new Settings[0];
 
 		// parses input using a DFA
 		int state = 0; // 0 - 11 with 0, 3, 11, and 12 accepting. -1 is the error state
@@ -114,7 +117,7 @@ public class SettingsParser {
 		}
 		
 		if (state == 0 || state == 3 || state == 11 || state == 12)
-			return result.toArray(new Settings[result.size()-1]);
+			return result.toArray(new Settings[result.size()]);
 		else
 			throw new SettingsParserException("invalid sequence encountered", lexeme);
 	}

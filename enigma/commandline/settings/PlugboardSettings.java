@@ -3,6 +3,10 @@ package enigma.commandline.settings;
 import enigma.machine.EnigmaMachine;
 import enigma.machine.Plugboard;
 
+/**
+ * 
+ * @author John Rizkalla
+ */
 public class PlugboardSettings extends Settings {
 
 	private char[][] pairs;

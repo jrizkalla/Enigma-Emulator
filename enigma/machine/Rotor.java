@@ -393,6 +393,6 @@ public class Rotor {
 
 	@Override
     public String toString(){
-        return "Rotor " + name + " at position " + currPos;
+        return "Rotor " + name + " at position " + (char)('A' + currPos - 1) + " (" + currPos + ")";
     }
 }

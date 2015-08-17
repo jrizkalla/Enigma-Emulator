@@ -64,9 +64,9 @@ public class UI {
 					printer.setAnimationOn(true);
 				} else if (command.equals("animationOff")){
 					printer.setAnimationOn(false);
-				} else if (command.equals("outputOn")){
-					printer.setSilentModeOn(true);
 				} else if (command.equals("outputOff")){
+					printer.setSilentModeOn(true);
+				} else if (command.equals("outputOn")){
 					printer.setSilentModeOn(false);
 				} else if (command.equals("settings")){
 					// look at the next
@@ -212,16 +212,16 @@ public class UI {
 				if (exitStatus == 0){
 					exitStatus = UI.parseLineInNormalMode(input);
 					if (exitStatus == 1){
-						if (!printer.isSilentModeOn()) System.out.println("Settings mode (until next EOF)");
+						if (!printer.isSilentModeOn()) System.out.println("Settings mode (until next line)");
 					}
 				} else { // settings mode
 					Settings.apply(printer.getMachine(), SettingsParser.parse(input));
-					System.out.println("Normal mode\n");
+					if (!printer.isSilentModeOn()) System.out.println("Normal mode\n");
 					exitStatus = 0;
 				}
 			} catch (SettingsParserException e) {
 				System.err.println("Oops, looks like you misspelled something in \"" + e.getLexeme() + "\"");
-				System.err.println("Apperantly the problem was caused by " + e.getMessage());
+				System.err.println(e.getMessage());
 				System.err.println("Type \\help followed by EOF for the help message");
 				// ignore line and continue (in normal mode)
 				exitStatus = 0;

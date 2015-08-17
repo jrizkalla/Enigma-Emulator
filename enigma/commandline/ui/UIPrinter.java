@@ -1,6 +1,7 @@
 package enigma.commandline.ui;
 
 import enigma.machine.EnigmaMachine;
+import enigma.machine.EnigmaMachineStepper;
 import enigma.machine.Plugboard;
 import enigma.machine.Reflector;
 import enigma.machine.Rotor;
@@ -9,7 +10,69 @@ import enigma.machine.Rotor;
  * Takes a string, encrypts it, and print it to the screnn
  * @author John Rizkalla
  */
-public class UIPrinter {
+public class UIPrinter implements EnigmaMachineStepper{
+	void printChar(char c){
+		if (animationOn){
+			// print a backspace followed by the char
+			System.out.print("\b");
+			System.out.flush();
+			System.out.print(c);
+			System.out.flush();
+			try{
+				Thread.sleep(50);
+			} catch (Exception e){
+				
+			}
+		}
+	}
+	
+	public boolean start(char input){
+		if (animationOn) {
+			System.out.print(input);
+			System.out.flush();
+		}
+		return true;
+	}
+	public boolean afterRotate(char input){return true;}
+	public boolean afterPlugboard1 (char input, char output){
+		printChar(output);
+		return true;
+	}
+	public boolean afterRightToLeftRotor3(char input, char[] rotorOutput){
+		printChar(rotorOutput[4]);
+		return true;
+	}
+	public boolean afterRightToLeftRotor2(char input, char[] rotorOutput){
+		printChar(rotorOutput[4]);
+		return true;
+	}
+	public boolean afterRightToLeftRotor1(char input, char[] rotorOutput){
+		printChar(rotorOutput[4]);
+		return true;
+	}
+	public boolean afterReflector(char input, char reflectorOutput){
+		printChar(reflectorOutput);
+		return true;
+	}
+	public boolean afterLeftToRightRotor1(char input, char[] rotorOutput){
+		printChar(rotorOutput[4]);
+		return true;
+	}
+	public boolean afterLeftToRightRotor2(char input, char[] rotorOutput){
+		printChar(rotorOutput[4]);
+		return true;
+	}
+	public boolean afterLeftToRightRotor3(char input, char[] rotorOutput){
+		printChar(rotorOutput[4]);
+		return true;
+	}
+	public boolean afterPlugboard2 (char input, char output){
+		printChar(output);
+		return true;
+	}
+	public void end(char output){
+		printChar(output);
+	}
 	
 	/**
 	 * Tells encryptText what info to print in between strings
@@ -42,6 +105,7 @@ public class UIPrinter {
 		// machine with default parts
 		Rotor[] rotors = {Rotor.createRotor("I", null), Rotor.createRotor("II", null), Rotor.createRotor("III", null)};
 		machine = new EnigmaMachine(rotors, Reflector.createReflectorType("Reflector A"), new Plugboard());
+		machine.setStepper(this);
 	}
 	
 	/**
@@ -55,14 +119,12 @@ public class UIPrinter {
 				String line = (String) o;
 				
 				if (this.isAnimationOn()){
-					// for now just print with a delay
-					for (char c : line.toCharArray()){
-						System.out.print(machine.encrypt(c));
-						System.out.flush();
-						try {
-							Thread.sleep(500);
-						} catch (InterruptedException e) {} // move on. No one cares if animationMode does not work properly (for now)
-					}
+					// Print the original string
+					System.out.print(line);
+					System.out.print("\r");
+					System.out.flush();
+					// Encrypt...
+					machine.encrypt(line);
 					System.out.println();
 				} else {
 					System.out.println(machine.encrypt(line));
@@ -111,7 +173,7 @@ public class UIPrinter {
 		String message = "Most commands follow a LaTeX style syntax so they're easy to remember\n";
 		message += "Possible commands are:\n";
 		message += "\tAnimation and output\n";
-		message += "\t\t\\animationOn and \\animationOff turn animation on and off. Right now animation does not do much\n";
+		message += "\t\t\\animationOn and \\animationOff turn animation on and off.\n";
 		message += "\t\t\\outputOff and \\outputOn turn on and off all output except the actual encrypted message and errors. These two are always on\n";
 		message += "\t animation and output commands affect the whole line\n\n";
 
