@@ -5,3 +5,5 @@ A description of the Enigma Machine can be found at [here](https://en.wikipedia.
 `enigma.machine` contains all the parts that simulate the actual machine as well as the machine itself.
 `enigma.commandline` contains the command line interface
 Switch to branch commandline-interface for instructions on how to compile and run the interface.
+
+More information can be found at [jrizkalla.github.io/enigma/intro.html](http://jrizkalla.github.io/enigma/intro.html)
